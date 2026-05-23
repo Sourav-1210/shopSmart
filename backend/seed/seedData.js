@@ -1,9 +1,20 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
+const dns = require('dns');
+
+// Configure Google DNS fallback to resolve Atlas SRV records in strict environments
+try {
+  dns.setServers(['8.8.8.8']);
+} catch (err) {
+  console.warn('Could not set custom DNS servers:', err);
+}
+
+// Load env relative to the script directory
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
 const Product = require('../models/Product');
 const User = require('../models/User');
-
-dotenv.config({ path: '../.env' });
 
 // Reliable Unsplash URLs with auto=format&fit=crop for max compatibility
 const u = (id, w = 500) =>
