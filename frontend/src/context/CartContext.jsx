@@ -36,9 +36,20 @@ const cartReducer = (state, action) => {
 };
 
 export const CartProvider = ({ children }) => {
-  const stored = localStorage.getItem('shopsmart_cart');
-  const initialState = { items: stored ? JSON.parse(stored) : [] };
+  let initialItems = [];
+  try {
+    const stored = localStorage.getItem('shopsmart_cart');
+    if (stored && stored !== 'undefined' && stored !== 'null') {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        initialItems = parsed;
+      }
+    }
+  } catch (err) {
+    console.error('Error parsing cart from localStorage:', err);
+  }
 
+  const initialState = { items: initialItems };
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   // Persist to localStorage

@@ -21,16 +21,21 @@ export const AuthProvider = ({ children }) => {
 
   // On mount: restore session from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem('shopsmart_user');
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem('shopsmart_user');
+      if (stored && stored !== 'undefined' && stored !== 'null') {
         const parsed = JSON.parse(stored);
-        setUser(parsed);
-        if (parsed.wishlist) setWishlist(parsed.wishlist);
-      } catch {
+        if (parsed && typeof parsed === 'object') {
+          setUser(parsed);
+          if (parsed.wishlist) setWishlist(parsed.wishlist);
+        } else {
+          setUser(DEFAULT_USER);
+        }
+      } else {
         setUser(DEFAULT_USER);
       }
-    } else {
+    } catch (err) {
+      console.error('Error parsing user from localStorage:', err);
       setUser(DEFAULT_USER);
     }
     setAuthInitialized(true);
