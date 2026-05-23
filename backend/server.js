@@ -32,6 +32,10 @@ app.use((err, req, res, next) => {
 });
 
 // Connect to MongoDB
+const dbUri = process.env.MONGO_URI || '';
+const maskedUri = dbUri.replace(/:([^:@]+)@/, ':****@');
+console.log('🔌 Connecting to MongoDB URI:', maskedUri);
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
